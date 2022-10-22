@@ -1,5 +1,5 @@
-import axios from "axios"
 import { Dispatch } from "redux"
+import axios from "../../config/axios"
 
 import * as actionTypes from "../actionTypes/category"
 
@@ -9,8 +9,10 @@ const fetchCategoryList = () => async (dispatch: Dispatch<Action>) => {
   })
   try {
     const { data } = await axios({
-      method: "get",
-      url: "https://asia-southeast2-sejutacita-app.cloudfunctions.net/fee-assessment-categories",
+      method: "post",
+      data: {
+        url: "/fee-assessment-categories",
+      },
     })
     dispatch({
       type: actionTypes.GET_CATEGORY_LIST_SUCCESS,
