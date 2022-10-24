@@ -1,9 +1,12 @@
 import { Dispatch } from "redux"
+import store from ".."
 import axios from "../../config/axios"
 
 import * as actionTypes from "../actionTypes/category"
 
-const fetchCategoryList = () => async (dispatch: Dispatch<Action>) => {
+import type { Category } from "../reducers/category"
+
+export const fetchCategoryList = () => async (dispatch: Dispatch<Action>) => {
   dispatch({
     type: actionTypes.GET_CATEGORY_LIST_PENDING,
   })
@@ -14,9 +17,12 @@ const fetchCategoryList = () => async (dispatch: Dispatch<Action>) => {
         url: "/fee-assessment-categories",
       },
     })
+    const newData = data.map((item: Category) => ({ ...item, isActive: false }))
+    newData[0].isActive = true
+
     dispatch({
       type: actionTypes.GET_CATEGORY_LIST_SUCCESS,
-      payload: data,
+      payload: newData,
     })
   } catch (err: any) {
     dispatch({
@@ -26,4 +32,17 @@ const fetchCategoryList = () => async (dispatch: Dispatch<Action>) => {
   }
 }
 
-export default fetchCategoryList
+export const setActiveCategory =
+  (id: number) => (dispatch: Dispatch<Action>) => {
+    const { categoryList } = store.getState().category
+    const items = categoryList.map((item) =>
+      item.id === id
+        ? { ...item, isActive: true }
+        : { ...item, isActive: false },
+    )
+
+    dispatch({
+      type: actionTypes.SET_ACTIVE_CATEGORY,
+      payload: items,
+    })
+  }

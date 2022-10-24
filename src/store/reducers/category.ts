@@ -1,8 +1,9 @@
 import * as actionTypes from "../actionTypes/category"
 
-interface Category {
+export interface Category {
   id: number
   name: string
+  isActive: boolean
 }
 
 interface State {
@@ -39,6 +40,11 @@ const categoryReducer = (
         isLoading: false,
         categoryList: [],
         error: action.payload,
+      }
+    case actionTypes.SET_ACTIVE_CATEGORY:
+      return {
+        ...state,
+        categoryList: action.payload,
       }
     default:
       return state

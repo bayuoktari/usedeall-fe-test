@@ -24,13 +24,13 @@
   },
   "plugins": ["react", "@typescript-eslint", "prettier"],
   "rules": {
+    "@typescript-eslint/default-param-last": ["off"],
     "react/react-in-jsx-scope": ["off"],
     "react/jsx-uses-react": ["off"],
     "react/jsx-props-no-spreading": ["warn"],
     "react/no-unescaped-entities": ["off"],
     "react/function-component-definition": ["off"],
     "react/require-default-props": ["off"],
-    "no-restricted-exports": ["off"],
-    "default-param-last": ["off"]
+    "no-restricted-exports": ["off"]
   }
 }
