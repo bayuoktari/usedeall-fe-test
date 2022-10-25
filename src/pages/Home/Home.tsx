@@ -17,6 +17,7 @@ import type { Dispatch } from "redux"
 
 import Chip from "../../components/Chip"
 import BookItem from "../../components/BookItem"
+import BookModal from "../../components/BookModal"
 
 import {
   fetchCategoryList,
@@ -39,14 +40,19 @@ function Home() {
   const activeCategory = categoryList.find((item) => item.isActive)
 
   const [bookItems, setBookItems] = useState<Book[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedBook, setSelectedBook] = useState<Book | undefined>(undefined)
+  const [currentPage, setCurrentPage] = useState(1)
 
   const handleSetActiveCategory = (id: number) => {
+    setCurrentPage(1)
     dispatch(setActiveCategory(id))
     dispatch(fetchBookList(id))
   }
 
   const handleChangePage = (selectedPage: number) => {
-    dispatch(fetchBookList(activeCategory?.id || 1, selectedPage + 1))
+    setCurrentPage(selectedPage)
+    dispatch(fetchBookList(activeCategory?.id || 1, selectedPage))
   }
 
   const handleSearch = (book: Book[], keyword: string) => {
@@ -65,10 +71,19 @@ function Home() {
     }
   }
 
+  const handleOpenDetail = (detail: Book) => {
+    setIsModalOpen(true)
+    setSelectedBook(detail)
+  }
+
   const renderBookList = () => {
     if (bookItems.length) {
       return bookItems.map((item: Book) => (
-        <BookItem detail={item} key={item.id} />
+        <BookItem
+          detail={item}
+          key={item.id}
+          handleClickDetail={() => handleOpenDetail(item)}
+        />
       ))
     }
     return (
@@ -95,6 +110,11 @@ function Home() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <BookModal
+        isOpen={isModalOpen}
+        handleClose={() => setIsModalOpen(false)}
+        content={selectedBook}
+      />
       <Box display="flex" flexDirection="column" pb={6}>
         <Box display="flex" justifyContent="center" py={6}>
           <Typography variant="h3">Boku Boku List</Typography>
@@ -134,25 +154,15 @@ function Home() {
               </Box>
               <Grid container spacing={3} justifyContent="center">
                 {renderBookList()}
-                {/* {bookList?.length > 0 ? (
-                  bookList.map((item: Book) => (
-                    <BookItem detail={item} key={item.id} />
-                  ))
-                ) : (
-                  <Box pt={3}>
-                    <Typography variant="h6">
-                      There is No Book in this category
-                    </Typography>
-                  </Box>
-                )} */}
               </Grid>
               {bookItems.length > 0 && (
                 <Box mt={3} display="flex" justifyContent="center">
                   <Pagination
                     count={10}
                     color="secondary"
+                    page={currentPage}
                     onChange={(_, selectedPage: number) =>
-                      handleChangePage(selectedPage + 1)
+                      handleChangePage(selectedPage)
                     }
                   />
                 </Box>
